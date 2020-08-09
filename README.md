@@ -93,3 +93,9 @@ https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/#usin
 
 https://programmersought.com/article/6032481348/
 
+
+
+https://docs.spring.io/spring/docs/4.0.x/spring-framework-reference/htmlsingle/#beans-factory-scopes-singleton
+
+
+
