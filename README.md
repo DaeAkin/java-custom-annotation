@@ -52,7 +52,9 @@ J2SE 5.0 부터 어노테이션을 작성할 때 java.lang.annotation 패키지�
 
 
 
-## Spring의 @Service 어노테이션 분석
+## 💡 Spring은 어노테이션을 어떻게 사용하고 있을까?
+
+Spring에서 애플리케이션을 실행 시 @Service나, @Component가 붙은 클래스들을 스캔해서 IoC 컨테이너에 등록해주는 과정이 있습니다. 
 
 ##### @Service 어노테이션
 
@@ -69,7 +71,7 @@ public @interface Service {
 }
 ```
 
-Service 어노테이션은, Target이 TYPE으로 지정되어 있습니다. 그 말은 즉슨, Class나 Interface를 타겟으로 삼는다는 의미 입니다.
+Service 어노테이션은, Target이 TYPE으로 지정되어 있습니다. Class나 Interface를 타겟으로 삼는다는 의미 입니다.
 
 또한 같은 패키지인`org.springframework.stereotype` 의 Component 어노테이션을 쓰고 있는걸 볼 수 있습니다.
 
@@ -87,6 +89,10 @@ public @interface Component {
 
 
 
+DefaultListableBeanFactory.registerBeanDefinition()
+
+
+
 ## 참고자료
 
 https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/#using-boot-auto-configuration
@@ -97,5 +103,5 @@ https://programmersought.com/article/6032481348/
 
 https://docs.spring.io/spring/docs/4.0.x/spring-framework-reference/htmlsingle/#beans-factory-scopes-singleton
 
-
+[다이어그램](https://app.diagrams.net/#G1IQGFbL7rTgsTyJL0irGu2-B3p-ENyhPm)
 
