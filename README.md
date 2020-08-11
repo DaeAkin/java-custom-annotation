@@ -91,7 +91,7 @@ public @interface Component {
 
 DefaultListableBeanFactory.registerBeanDefinition()
 
-
+Annotation 을 처리하는 클래스는 AnnotationBeanPostProcessor다.
 
 ## 참고자료
 
