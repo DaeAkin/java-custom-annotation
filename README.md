@@ -105,3 +105,6 @@ https://docs.spring.io/spring/docs/4.0.x/spring-framework-reference/htmlsingle/#
 
 [다이어그램](https://app.diagrams.net/#G1IQGFbL7rTgsTyJL0irGu2-B3p-ENyhPm)
 
+
+
+[스프링 싱글톤 구현법](https://stackoverflow.com/questions/2637864/singleton-design-pattern-vs-singleton-beans-in-spring-container)
