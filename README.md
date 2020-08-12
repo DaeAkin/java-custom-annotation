@@ -52,6 +52,10 @@ J2SE 5.0 부터 어노테이션을 작성할 때 java.lang.annotation 패키지�
 
 
 
+
+
+
+
 ## 💡 Spring은 어노테이션을 어떻게 사용하고 있을까?
 
 Spring에서 애플리케이션을 실행 시 @Service나, @Component가 붙은 클래스들을 스캔해서 IoC 컨테이너에 등록해주는 과정이 있습니다. 
@@ -87,11 +91,15 @@ public @interface Component {
 }
 ```
 
+Spring에서는 @Component , @Service , @Controller 등 어노테이션이 사용된 클래스는 bean으로 등록하게 됩니다. 등록해주는 스프링의 코드는 다음과 같습니다.
+
+##### ClassPathBeanDefinitionScanner.java
+
+![](https://github.com/DaeAkin/java-custom-annotation/blob/master/docs/%EC%8A%A4%ED%8A%B8%EB%A0%88%EC%98%A4%ED%83%80%EC%9E%85%20%EC%96%B4%EB%85%B8%ED%85%8C%EC%9D%B4%EC%85%98%EC%9D%84%20%EB%93%B1%EB%A1%9D%ED%95%B4%EC%A3%BC%EB%8A%94%20%ED%81%B4%EB%9E%98%EC%8A%A4.png?raw=true)
+
+이 메소드가 ClassPath에 있는 패키지의 모든 클래스를 읽어, @Component 어노테이션이 붙은 클래스를 IoC 컨테이너에 등록해주는 메소드 입니다.
 
 
-DefaultListableBeanFactory.registerBeanDefinition()
-
-Annotation 을 처리하는 클래스는 AnnotationBeanPostProcessor다.
 
 ## 참고자료
 
@@ -99,12 +107,8 @@ https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/#usin
 
 https://programmersought.com/article/6032481348/
 
-
-
 https://docs.spring.io/spring/docs/4.0.x/spring-framework-reference/htmlsingle/#beans-factory-scopes-singleton
 
 [다이어그램](https://app.diagrams.net/#G1IQGFbL7rTgsTyJL0irGu2-B3p-ENyhPm)
-
-
 
 [스프링 싱글톤 구현법](https://stackoverflow.com/questions/2637864/singleton-design-pattern-vs-singleton-beans-in-spring-container)
