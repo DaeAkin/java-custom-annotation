@@ -10,9 +10,9 @@ import java.lang.reflect.Field;
 public class FruitInfoUtil {
     public static void getFruitInfo(Class<?> clazz) {
 
-        String strFruitName = " Fruit Name:";
-        String strFruitColor = " Fruit color:";
-        String strFruitProvicer = "Supplier Information:";
+        String strFruitName = " 과일 이름 :";
+        String strFruitColor = " 과일 색 :";
+        String strFruitProvider = "과일 파는 곳";
 
         Field[] fields = clazz.getDeclaredFields();
 
@@ -27,8 +27,8 @@ public class FruitInfoUtil {
                 System.out.println(strFruitColor);
             } else if (field.isAnnotationPresent(FruitProvider.class)) {
                 FruitProvider fruitProvider = field.getAnnotation(FruitProvider.class);
-                strFruitProvicer = " Supplier ID: " + fruitProvider.id() + " Vendor Name: " + fruitProvider.name() + " Vendor Address: " + fruitProvider.address();
-                System.out.println(strFruitProvicer);
+                strFruitProvider = " 과일 파는 곳의 ID: " + fruitProvider.id() + " 지점 이름 : " + fruitProvider.name() + " 지점 주소: " + fruitProvider.address();
+                System.out.println(strFruitProvider);
             }
         }
     }

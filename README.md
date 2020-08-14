@@ -1,22 +1,38 @@
-# ‼️ 스프링 부트의 autoconfiguration
+# ‼️ Spring Annotation의 원리와 Custom Annotation 만들어보기
+
+Spring에서 bean을 만드는 방법은 여러가지 있지만, 그 중에서 @Component 어노테이션을 이용하는 방법이 있습니다. 이 어노테이션은 어떻게 만들고, 어떻게 작동을 할까요? 
+
+##### @Component 어노테이션
+
+```java
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Indexed
+public @interface Component {
+    String value() default "";
+}
+```
 
 
 
-![](https://github.com/DaeAkin/DaeAkin.github.io/blob/master/img/blog/custom-annotation/javacompiler.png?raw=true)
+
 
 
 
 J2SE 5.0 부터 어노테이션을 작성할 때 java.lang.annotation 패키지에 있는 4가지 어노테이션을 이용하여 작성합니다.
 
-- @Documented : Java doc에 어노테이션을 추가할지 여부를 알려줍니다.
+- @Documented : Java doc에 문서화 여부 결정
 
 - @Retention : 어노테이션의 지속 시간을 정합니다.
 
-  - RetentionPolicy.SOURCE : 컴파일 동안에는 동작되지 않습니다. 이 어노테이션은 컴파일이 완료된 후에는 의미가 없으므로, 바이트 코드에 기록되지 않습니다. 예시로는 @Override와 @SuppressWarnings 어노테이션이 있습니다.
-  - RetentionPolicy.CLASS : 클래스 로드동안에는 작동하지 않습니다. 바이트코드 레벨에서 후 처리기를 동작이 필요 할 때 사용합니다. @Retention에 아무 속성을 주지 않으면, 기본 값으로 설정됩니다.
-  - RetentionPlicy.RUNTIME : 이 어노테이션은 런타임시 반영됩니다. 커스텀 어노테이션을 만들 때 주로 사용합니다.
+  - RetentionPolicy.SOURCE : 컴파일 후에 정보들이 사라집니다. 이 어노테이션은 컴파일이 완료된 후에는 의미가 없으므로, 바이트 코드에 기록되지 않습니다. 예시로는 @Override와 @SuppressWarnings 어노테이션이 있습니다.
+  - RetentionPolicy.CLASS : default 값 입니다. 컴파일러가 클래스파일에 기록하기 때문에 런타임 시 JVM에서 정보를 가져올 필요가 없습니다. Reflection 사용 불가.
 
-- @Target : 어노테이션을 작성할 곳 입니다. 작성하지 않으면, 어노테이션은 어디든지 존재하게 됩니다.Where annotation can be placed. If you don’t specify this, annotation can be placed anywhere. The following are valid values. One important point here is that it’s inclusive only, which means if you want annotation on 7 attributes and just want to exclude only one attribute, you need to include all 7 while defining the target.
+    클래스 로드동안에는 작동하지 않습니다. 바이트코드 레벨에서 후 처리기를 동작이 필요 할 때 사용합니다. @Retention에 아무 속성을 주지 않으면, 기본 값으로 설정됩니다.
+  - RetentionPlicy.RUNTIME : 이 어노테이션은 런타임시 반영됩니다. 커스텀 어노테이션을 만들 때 주로 사용합니다. Reflection 사용 가능
+
+- @Target : 어노테이션을 작성할 곳 입니다. 디폴트는 모든 대상입니다. 예를 들어 @Target(ElementType.FIELD)로 지정해주면, 필드에만 어노테이션을 달 수 있습니다. 그렇지 않으면, 컴파일 때 에러가 나게 됩니다.
 
   > *ElementType.TYPE (class, interface, enum)*
   >
@@ -34,7 +50,11 @@ J2SE 5.0 부터 어노테이션을 작성할 때 java.lang.annotation 패키지�
   >
   > *ElementType.PACKAGE (remember package-info.java)*
 
-- @Inherited : 자식클래스에 영향을 미칠지 결정합니다.
+- @Inherited : 자식클래스에 상속할지 결정
+
+
+
+![](https://github.com/DaeAkin/DaeAkin.github.io/blob/master/img/blog/custom-annotation/javacompiler.png?raw=true)
 
 
 
@@ -51,7 +71,126 @@ J2SE 5.0 부터 어노테이션을 작성할 때 java.lang.annotation 패키지�
 5. 어노테이션은 멤버 변수가 없으면 , 해당 어노테이션은 사용되지 않습니다. ?
 
 
+##### FruitColor 어노테이션 만들기
+```java
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface FruitColor {
+    enum Color{BLUE,RED,GREEN}
 
+    Color fruitColor() default Color.GREEN;
+}
+```
+
+##### FruitName 어노테이션 만들기
+``` java
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface FruitName {
+    String value() default "";
+}
+
+```
+
+##### FruitProvider 어노테이션 만들기
+
+``` java
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface FruitProvider {
+
+    int id() default -1;
+
+    String name() default "";
+
+    String address() default "";
+}
+```
+
+- @FruitName : 과일의 이름
+- @FruitColor : 과일의 색
+- @FruitProvider : 과일을 판매하는 곳
+
+총 3개의 어노테이션을 만들었습니다.
+이제 Apple 이라는 클래스를 만들어 이 어노테이션들을 사용해보겠습니다.
+
+
+##### Apple.java
+```java
+public class Apple {
+
+    @FruitName("Apple")
+    private String appleName;
+
+    @FruitColor(fruitColor = FruitColor.Color.RED)
+    private String appleColor;
+
+    @FruitProvider(id = 1,name = "HomePlus",address = "Seoul")
+    private String appleProvider;
+    
+    
+    ...getter setter
+    }
+```
+
+
+
+##### **FruitInfoUtil.java**
+
+```java
+public class FruitInfoUtil {
+    public static void getFruitInfo(Class<?> clazz) {
+
+        String strFruitName = " 과일 이름 :";
+        String strFruitColor = " 과일 색 :";
+        String strFruitProvider = "과일 파는 곳";
+
+        Field[] fields = clazz.getDeclaredFields();
+
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(FruitName.class)) {
+                FruitName fruitName = field.getAnnotation(FruitName.class);
+                strFruitName = strFruitName + fruitName.value();
+                System.out.println(strFruitName);
+            } else if (field.isAnnotationPresent(FruitColor.class)) {
+                FruitColor fruitColor = field.getAnnotation(FruitColor.class);
+                strFruitColor = strFruitColor + fruitColor.fruitColor().toString();
+                System.out.println(strFruitColor);
+            } else if (field.isAnnotationPresent(FruitProvider.class)) {
+                FruitProvider fruitProvider = field.getAnnotation(FruitProvider.class);
+                strFruitProvider = " 과일 파는 곳의 ID: " + fruitProvider.id() + " 지점 이름 : " + fruitProvider.name() + " 지점 주소: " + fruitProvider.address();
+                System.out.println(strFruitProvider);
+            }
+        }
+    }
+}
+```
+
+
+
+##### FruitRun.java
+
+```java
+public class FruitRun {
+
+     public static void main(String[] args) {
+          FruitInfoUtil.getFruitInfo(Apple.class);
+      }
+}
+```
+
+
+
+##### 결과
+
+```
+ 과일 이름 :Apple
+ 과일 색 :RED
+ 과일 파는 곳의 ID: 1 지점 이름 : HomePlus 지점 주소: Seoul
+```
 
 
 
@@ -101,9 +240,12 @@ Spring에서는 @Component , @Service , @Controller 등 어노테이션이 사�
 
 
 
+
 ## 참고자료
 
 https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/#using-boot-auto-configuration
+
+[RetentionPoliy 설명글](https://stackoverflow.com/questions/3107970/how-do-different-retention-policies-affect-my-annotations)
 
 https://programmersought.com/article/6032481348/
 
@@ -112,3 +254,5 @@ https://docs.spring.io/spring/docs/4.0.x/spring-framework-reference/htmlsingle/#
 [다이어그램](https://app.diagrams.net/#G1IQGFbL7rTgsTyJL0irGu2-B3p-ENyhPm)
 
 [스프링 싱글톤 구현법](https://stackoverflow.com/questions/2637864/singleton-design-pattern-vs-singleton-beans-in-spring-container)
+
+## https://stackoverflow.com/questions/2637864/singleton-design-pattern-vs-singleton-beans-in-spring-container)
